@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jeux Python — Entraîne-toi aux maths</title>
+  <meta name="description" content="Entraîne-toi aux opérations mathématiques avec Jeux Python : addition, soustraction, multiplication, division et plus encore !"/>
+  <meta name="keywords" content="jeux python, maths, opérations, quiz mathématiques, entraînement calcul, streamlit"/>
+  <meta property="og:title" content="Jeux Python — Entraîne-toi aux maths"/>
+  <meta property="og:description" content="Quiz interactif pour s'entraîner aux opérations mathématiques."/>
+  <meta property="og:url" content="https://jeuxpython.streamlit.app/"/>
+  <link rel="canonical" href="https://jeuxpython.streamlit.app/"/>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #e94560;
+      --orange: #f5a623;
+      --dark1:  #1a1a2e;
+      --dark2:  #16213e;
+      --dark3:  #0f3460;
+      --glass:  rgba(255,255,255,0.07);
+      --border: rgba(255,255,255,0.12);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: linear-gradient(135deg, var(--dark1) 0%, var(--dark2) 50%, var(--dark3) 100%);
+      min-height: 100vh;
+      color: #f0f0f0;
+      overflow-x: hidden;
+    }
+
+    /* ── Floating symbols ── */
+    .symbols {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .sym {
+      position: absolute;
+      font-family: 'Fredoka One', cursive;
+      color: rgba(233,69,96,0.08);
+      animation: drift linear infinite;
+      user-select: none;
+    }
+    @keyframes drift {
+      from { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 1; }
+      to   { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* ── Layout ── */
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      gap: 32px;
+    }
+
+    /* ── Hero ── */
+    .hero { text-align: center; animation: fadeUp .8s ease both; }
+    .hero .emoji {
+      font-size: 5rem;
+      display: block;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 0 30px rgba(233,69,96,.5));
+      animation: pulse 3s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { transform: scale(1); }
+      50%      { transform: scale(1.08); }
+    }
+    .hero h1 {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(2.8rem, 8vw, 5rem);
+      background: linear-gradient(90deg, var(--red), var(--orange));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.1;
+      margin-bottom: 14px;
+    }
+    .hero p {
+      font-size: clamp(1rem, 3vw, 1.25rem);
+      color: rgba(255,255,255,0.6);
+      max-width: 480px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ── Features ── */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+      width: 100%;
+      max-width: 680px;
+      animation: fadeUp .8s .2s ease both;
+    }
+    .feat {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px 16px;
+      text-align: center;
+      backdrop-filter: blur(8px);
+      transition: transform .2s, border-color .2s;
+    }
+    .feat:hover { transform: translateY(-4px); border-color: var(--red); }
+    .feat .icon { font-size: 2rem; margin-bottom: 8px; }
+    .feat .label {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1rem;
+      color: rgba(255,255,255,0.85);
+    }
+
+    /* ── CTA ── */
+    .cta-wrap { animation: fadeUp .8s .4s ease both; }
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(90deg, var(--red), #c0392b);
+      color: white;
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.4rem;
+      padding: 18px 48px;
+      border-radius: 50px;
+      text-decoration: none;
+      box-shadow: 0 8px 30px rgba(233,69,96,0.45);
+      transition: transform .2s, box-shadow .2s;
+      letter-spacing: .5px;
+    }
+    .cta:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 14px 40px rgba(233,69,96,0.6);
+    }
+    .cta span { font-size: 1.6rem; }
+
+    /* ── Score strip ── */
+    .strip {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp .8s .6s ease both;
+    }
+    .stat {
+      text-align: center;
+    }
+    .stat .num {
+      font-family: 'Fredoka One', cursive;
+      font-size: 2rem;
+      background: linear-gradient(90deg, var(--red), var(--orange));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat .desc { font-size: .85rem; color: rgba(255,255,255,0.45); }
+
+    /* ── Footer ── */
+    footer {
+      position: relative; z-index: 1;
+      text-align: center;
+      padding: 20px;
+      color: rgba(255,255,255,0.25);
+      font-size: .8rem;
+    }
+    footer a { color: var(--red); text-decoration: none; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Floating math symbols -->
+<div class="symbols" id="syms"></div>
+
+<div class="wrapper">
+
+  <div class="hero">
+    <span class="emoji">🧮</span>
+    <h1>Jeux Python</h1>
+    <p>Entraîne-toi aux opérations mathématiques : additions, multiplications, puissances et bien plus — gratuitement !</p>
+  </div>
+
+  <div class="features">
+    <div class="feat"><div class="icon">➕</div><div class="label">Addition</div></div>
+    <div class="feat"><div class="icon">✖️</div><div class="label">Multiplication</div></div>
+    <div class="feat"><div class="icon">➗</div><div class="label">Division</div></div>
+    <div class="feat"><div class="icon">√</div><div class="label">Racine carrée</div></div>
+    <div class="feat"><div class="icon">x²</div><div class="label">Puissance</div></div>
+    <div class="feat"><div class="icon">%</div><div class="label">Modulo</div></div>
+  </div>
+
+  <div class="cta-wrap">
+    <a class="cta" href="https://jeuxpython.streamlit.app/" target="_blank" rel="noopener">
+      <span>🚀</span> Jouer maintenant
+    </a>
+  </div>
+
+  <div class="strip">
+    <div class="stat"><div class="num">8</div><div class="desc">opérations disponibles</div></div>
+    <div class="stat"><div class="num">∞</div><div class="desc">questions générées</div></div>
+    <div class="stat"><div class="num">100%</div><div class="desc">gratuit & open-source</div></div>
+  </div>
+
+</div>
+
+<footer>
+  Fait avec ❤️ par <a href="https://github.com/HGVKSHDBQSJBKSQJBF/operation" target="_blank">lecapitainecoeur</a>
+  &nbsp;·&nbsp;
+  <a href="https://jeuxpython.streamlit.app/" target="_blank">jeuxpython.streamlit.app</a>
+</footer>
+
+<script>
+  // Generate floating symbols
+  const syms = ['＋','－','×','÷','²','³','√','%','=','?'];
+  const container = document.getElementById('syms');
+  for (let i = 0; i < 22; i++) {
+    const el = document.createElement('div');
+    el.className = 'sym';
+    el.textContent = syms[Math.floor(Math.random() * syms.length)];
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.fontSize = (Math.random() * 60 + 30) + 'px';
+    el.style.animationDuration = (Math.random() * 20 + 15) + 's';
+    el.style.animationDelay = (Math.random() * 20) + 's';
+    container.appendChild(el);
+  }
+</script>
+</body>
+</html>
