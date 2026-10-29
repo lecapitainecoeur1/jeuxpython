@@ -128,7 +128,18 @@
     }
 
     /* ── CTA ── */
-    .cta-wrap { animation: fadeUp .8s .4s ease both; }
+    .cta-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      animation: fadeUp .8s .4s ease both;
+    }
+    .cta.cta-alt {
+      background: linear-gradient(90deg, var(--orange), #e67e22);
+      box-shadow: 0 8px 30px rgba(245,166,35,0.45);
+    }
+    .cta.cta-alt:hover { box-shadow: 0 14px 40px rgba(245,166,35,0.6); }
     .cta {
       display: inline-flex;
       align-items: center;
@@ -213,6 +224,9 @@
     <a class="cta" href="https://jeuxpython.streamlit.app/" target="_blank" rel="noopener">
       <span>🚀</span> Jouer maintenant
     </a>
+    <a class="cta cta-alt" href="https://skz.kaantay.fr:51709" target="_blank" rel="noopener">
+      <span>🎮</span> Version Flask
+    </a>
   </div>
 
   <div class="strip">
@@ -227,6 +241,8 @@
   Fait avec ❤️ par <a href="https://github.com/lecapitainecoeur1" target="_blank">lecapitainecoeur</a>
   &nbsp;·&nbsp;
   <a href="https://jeuxpython.streamlit.app/" target="_blank">jeuxpython.streamlit.app</a>
+  &nbsp;·&nbsp;
+  <a href="https://skz.kaantay.fr:51709" target="_blank" rel="noopener">skz.kaantay.fr:51709</a>
 </footer>
 
 <script>
